@@ -54,7 +54,7 @@ import (
 func main() {
 	r := retry.New(
 		retry.Config{
-			maxAttemptTimes: 10,
+			MaxAttemptTimes: 10,
 		})
 
 	fn := func() error {
