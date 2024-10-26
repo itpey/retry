@@ -8,7 +8,7 @@ RETRY
 </h1>
 
 <p align="center">
-RETRY is a flexible and configurable retry mechanism for Go. With RETRY, you can easily implement retry logic with customizable backoff strategies to enhance the resilience of your applications.
+Flexible and configurable retry mechanism for Go. With RETRY, you can easily implement retry logic with customizable backoff strategies to enhance the resilience of your applications.
 </p>
 
 <p align="center">
@@ -52,8 +52,8 @@ import (
 )
 
 func main() {
-	retry := retry.New(
-		Config{
+	r := retry.New(
+		retry.Config{
 			maxAttemptTimes: 10,
 		})
 
@@ -61,7 +61,7 @@ func main() {
 		return errors.New("temporary error")
 	}
 	ctx := context.Background()
-	if err := retry.Do(ctx, fn); err != nil {
+	if err := r.Do(ctx, fn); err != nil {
 		if retry.IsMaxRetriesError(err) {
 			fmt.Println("Failed after maximum number of retries")
 		} else {
@@ -89,12 +89,12 @@ import (
 )
 
 func main() {
-	retry := retry.New(
-		Config{
-			maxAttemptTimes: 5,
-			initialBackoff:  100 * time.Millisecond,
-			maxBackoff:      1 * time.Second,
-			maxJitter:       50 * time.Millisecond,
+	r := retry.New(
+		retry.Config{
+			MaxAttemptTimes: 5,
+			InitialBackoff:  100 * time.Millisecond,
+			MaxBackoff:      1 * time.Second,
+			MaxJitter:       50 * time.Millisecond,
 		})
 
 	fn := func() error {
@@ -102,7 +102,7 @@ func main() {
 	}
 
 	ctx := context.Background()
-	if err := retry.Do(ctx, fn); err != nil {
+	if err := r.Do(ctx, fn); err != nil {
 		if retry.IsMaxRetriesError(err) {
 			fmt.Println("Failed after maximum number of retries")
 		} else {

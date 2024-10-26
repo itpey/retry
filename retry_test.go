@@ -26,40 +26,40 @@ import (
 // TestNew tests the default values of a new Retry instance.
 func TestNew(t *testing.T) {
 	r := New()
-	if r.cfg.maxAttemptTimes != 3 {
-		t.Errorf("Expected maxRetries to be 3, got %d", r.cfg.maxAttemptTimes)
+	if r.cfg.MaxAttemptTimes != 3 {
+		t.Errorf("Expected maxRetries to be 3, got %d", r.cfg.MaxAttemptTimes)
 	}
-	if r.cfg.initialBackoff != 0 {
-		t.Errorf("Expected initialBackoff to be 0, got %d", r.cfg.initialBackoff)
+	if r.cfg.InitialBackoff != 0 {
+		t.Errorf("Expected initialBackoff to be 0, got %d", r.cfg.InitialBackoff)
 	}
-	if r.cfg.maxBackoff != 0 {
-		t.Errorf("Expected maxBackoff to be 0, got %d", r.cfg.maxBackoff)
+	if r.cfg.MaxBackoff != 0 {
+		t.Errorf("Expected maxBackoff to be 0, got %d", r.cfg.MaxBackoff)
 	}
-	if r.cfg.maxJitter != 0 {
-		t.Errorf("Expected jitter to be 0, got %d", r.cfg.maxJitter)
+	if r.cfg.MaxJitter != 0 {
+		t.Errorf("Expected jitter to be 0, got %d", r.cfg.MaxJitter)
 	}
 }
 
 // TestWithMaxRetries tests setting the maximum number of retries.
 func TestWithMaxAttemptTimes(t *testing.T) {
-	r := New(Config{maxAttemptTimes: 5})
-	if r.cfg.maxAttemptTimes != 5 {
-		t.Errorf("Expected maxAttemptTimes to be 5, got %d", r.cfg.maxAttemptTimes)
+	r := New(Config{MaxAttemptTimes: 5})
+	if r.cfg.MaxAttemptTimes != 5 {
+		t.Errorf("Expected maxAttemptTimes to be 5, got %d", r.cfg.MaxAttemptTimes)
 	}
 }
 
 // TestWithBackoff tests setting the backoff parameters.
 func TestWithBackoff(t *testing.T) {
 	r := New(
-		Config{initialBackoff: 100 * time.Millisecond, maxBackoff: 2 * time.Second, maxJitter: 50 * time.Millisecond})
-	if r.cfg.initialBackoff != 100*time.Millisecond {
-		t.Errorf("Expected initialBackoff to be 100ms, got %d", r.cfg.initialBackoff)
+		Config{InitialBackoff: 100 * time.Millisecond, MaxBackoff: 2 * time.Second, MaxJitter: 50 * time.Millisecond})
+	if r.cfg.InitialBackoff != 100*time.Millisecond {
+		t.Errorf("Expected initialBackoff to be 100ms, got %d", r.cfg.InitialBackoff)
 	}
-	if r.cfg.maxBackoff != 2*time.Second {
-		t.Errorf("Expected maxBackoff to be 2s, got %d", r.cfg.maxBackoff)
+	if r.cfg.MaxBackoff != 2*time.Second {
+		t.Errorf("Expected maxBackoff to be 2s, got %d", r.cfg.MaxBackoff)
 	}
-	if r.cfg.maxJitter != 50*time.Millisecond {
-		t.Errorf("Expected jitter to be 50ms, got %d", r.cfg.maxJitter)
+	if r.cfg.MaxJitter != 50*time.Millisecond {
+		t.Errorf("Expected jitter to be 50ms, got %d", r.cfg.MaxJitter)
 	}
 }
 
@@ -78,7 +78,7 @@ func TestDoSuccess(t *testing.T) {
 
 // TestDoMaxRetries tests the retry mechanism when the maximum number of retries is reached.
 func TestDoMaxRetries(t *testing.T) {
-	r := New(Config{maxAttemptTimes: 3})
+	r := New(Config{MaxAttemptTimes: 3})
 	fn := func() error {
 		return errors.New("some error")
 	}
@@ -93,7 +93,7 @@ func TestDoMaxRetries(t *testing.T) {
 func TestDoFailsTwiceThenSucceeds(t *testing.T) {
 
 	r := New(
-		Config{maxAttemptTimes: 5, initialBackoff: 100 * time.Millisecond, maxBackoff: 1 * time.Second, maxJitter: 50 * time.Millisecond})
+		Config{MaxAttemptTimes: 5, InitialBackoff: 100 * time.Millisecond, MaxBackoff: 1 * time.Second, MaxJitter: 50 * time.Millisecond})
 	attempts := 0
 	fn := func() error {
 		attempts++
@@ -125,7 +125,7 @@ func TestCalculateBackoff(t *testing.T) {
 
 // TestBackoffDisabled tests the retry mechanism with backoff disabled.
 func TestBackoffDisabled(t *testing.T) {
-	r := New(Config{maxAttemptTimes: 3})
+	r := New(Config{MaxAttemptTimes: 3})
 	fn := func() error {
 		return errors.New("some error")
 	}
@@ -143,7 +143,7 @@ func TestBackoffDisabled(t *testing.T) {
 
 // TestBackoffEnabled tests the retry mechanism with backoff enabled.
 func TestBackoffEnabled(t *testing.T) {
-	r := New(Config{maxAttemptTimes: 3, initialBackoff: 100 * time.Millisecond, maxBackoff: 1 * time.Second, maxJitter: 50 * time.Millisecond})
+	r := New(Config{MaxAttemptTimes: 3, InitialBackoff: 100 * time.Millisecond, MaxBackoff: 1 * time.Second, MaxJitter: 50 * time.Millisecond})
 	fn := func() error {
 		return errors.New("some error")
 	}
@@ -161,7 +161,7 @@ func TestBackoffEnabled(t *testing.T) {
 
 // TestContextCancelled tests the retry mechanism when the context is cancelled.
 func TestContextCancelled(t *testing.T) {
-	r := New(Config{maxAttemptTimes: 10, initialBackoff: 100 * time.Millisecond, maxBackoff: 1 * time.Second, maxJitter: 50 * time.Millisecond})
+	r := New(Config{MaxAttemptTimes: 10, InitialBackoff: 100 * time.Millisecond, MaxBackoff: 1 * time.Second, MaxJitter: 50 * time.Millisecond})
 	fn := func() error {
 		return errors.New("some error")
 	}
@@ -194,10 +194,10 @@ func TestRetryThreadSafety(t *testing.T) {
 
 	// Create a Retry instance with a maximum of maxAttempts
 	retry := New(Config{
-		maxAttemptTimes: maxAttempts,
-		initialBackoff:  10 * time.Millisecond,
-		maxBackoff:      100 * time.Millisecond,
-		maxJitter:       10 * time.Millisecond,
+		MaxAttemptTimes: maxAttempts,
+		InitialBackoff:  10 * time.Millisecond,
+		MaxBackoff:      100 * time.Millisecond,
+		MaxJitter:       10 * time.Millisecond,
 	})
 
 	// Use a WaitGroup to wait for all goroutines to finish

@@ -18,17 +18,17 @@ import "time"
 
 // Config defines the config for Retry.
 type Config struct {
-	maxAttemptTimes uint          // Maximum number of retries
-	initialBackoff  time.Duration // Initial backoff duration
-	maxBackoff      time.Duration // Maximum backoff duration
-	maxJitter       time.Duration // Jitter duration to add randomness to backoff
+	MaxAttemptTimes uint          // Maximum number of retries
+	InitialBackoff  time.Duration // Initial backoff duration
+	MaxBackoff      time.Duration // Maximum backoff duration
+	MaxJitter       time.Duration // Jitter duration to add randomness to backoff
 }
 
 var ConfigDefault = Config{
-	maxAttemptTimes: 3,                    // Default max retries
-	initialBackoff:  0 * time.Millisecond, // Default initial backoff
-	maxBackoff:      0 * time.Millisecond, // Default max backoff
-	maxJitter:       0 * time.Millisecond, // Default Jitter
+	MaxAttemptTimes: 3,                    // Default max retries
+	InitialBackoff:  0 * time.Millisecond, // Default initial backoff
+	MaxBackoff:      0 * time.Millisecond, // Default max backoff
+	MaxJitter:       0 * time.Millisecond, // Default Jitter
 }
 
 // Helper function to set default values

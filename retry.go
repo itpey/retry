@@ -41,10 +41,10 @@ func New(config ...Config) *Retry {
 // Do retries the provided function asynchronously until it either succeeds (returns nil error),
 // decides not to retry (returns false), or reaches the maximum number of retries if specified.
 func (r *Retry) Do(ctx context.Context, fn func() error) error {
-	maxRetries := r.cfg.maxAttemptTimes
-	initialBackoff := r.cfg.initialBackoff
-	maxBackoff := r.cfg.maxBackoff
-	maxJitter := r.cfg.maxJitter
+	maxRetries := r.cfg.MaxAttemptTimes
+	initialBackoff := r.cfg.InitialBackoff
+	maxBackoff := r.cfg.MaxBackoff
+	maxJitter := r.cfg.MaxJitter
 
 	backoff := initialBackoff
 	timer := time.NewTimer(0) // Initialize a timer
